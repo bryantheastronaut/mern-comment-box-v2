@@ -7,11 +7,11 @@ class CommentForm extends Component {
     this.state = { author: '', text: '' };
   }
 
-  handleAuthorChange = e => this.setState({author: e.target.value });
+  handleAuthorChange = e => this.setState({ author: e.target.value });
 
   handleTextChange = e => this.setState({ text: e.target.value });
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     console.log(`${this.state.author} said “${this.state.text}”`);
     // we will be tying this into the POST method in a bit

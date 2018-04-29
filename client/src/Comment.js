@@ -1,17 +1,14 @@
 // Comment.js
 import React from 'react';
 import PropTypes from 'prop-types';
-import marked from 'marked';
+import ReactMarkdown from 'react-markdown';
 
-const Comment = (props) => {
-  const rawMarkup = marked(props.children.toString());
-  return (
-    <div>
-      <h3>{props.author}</h3>
-      {rawMarkup}
-    </div>
-  );
-};
+const Comment = props => (
+  <div>
+    <h3>{props.author}</h3>
+    <ReactMarkdown source={props.children} />
+  </div>
+);
 
 Comment.propTypes = {
   author: PropTypes.string.isRequired,
