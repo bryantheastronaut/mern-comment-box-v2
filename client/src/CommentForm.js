@@ -1,41 +1,37 @@
 // CommentForm.js
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
-class CommentForm extends Component {
-  constructor() {
-    super();
-    this.state = { author: '', text: '' };
-  }
+const CommentForm = props => (
+  <form onSubmit={props.submitComment}>
+    <input
+      type="text"
+      name="author"
+      placeholder="Your name…"
+      value={props.author}
+      onChange={props.handleChangeText}
+    />
+    <input
+      type="text"
+      name="comment"
+      placeholder="Say something..."
+      value={props.comment}
+      onChange={props.handleChangeText}
+    />
+    <input type="submit" value="Post" />
+  </form>
+);
 
-  handleAuthorChange = e => this.setState({ author: e.target.value });
+CommentForm.propTypes = {
+  submitComment: PropTypes.func.isRequired,
+  handleChangeText: PropTypes.func.isRequired,
+  comment: PropTypes.string,
+  author: PropTypes.string,
+};
 
-  handleTextChange = e => this.setState({ text: e.target.value });
-
-  handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(`${this.state.author} said “${this.state.text}”`);
-    // we will be tying this into the POST method in a bit
-  }
-
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <input
-          type="text"
-          placeholder="Your name…"
-          value={this.state.author}
-          onChange={this.handleAuthorChange}
-        />
-        <input
-          type="text"
-          placeholder="Say something..."
-          value={this.state.text}
-          onChange={this.handleTextChange}
-        />
-        <input type="submit" value="Post" />
-      </form>
-    );
-  }
-}
+CommentForm.defaultProps = {
+  comment: '',
+  author: '',
+};
 
 export default CommentForm;
