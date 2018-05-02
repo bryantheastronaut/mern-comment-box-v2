@@ -12,6 +12,7 @@ class CommentBox extends Component {
       error: null,
       author: '',
       comment: '',
+      updateId: null,
     };
     this.pollInterval = null;
   }
@@ -45,30 +46,81 @@ class CommentBox extends Component {
     this.setState(newState);
   }
 
-  submitComment = (e) => {
-    e.preventDefault();
-    const { author, comment } = this.state;
-    if (!author || !comment) return;
-    const data = [...this.state.data, { author, comment, _id: Date.now() }];
+  submitUpdatedComment = () => {
+    const { author, text, updateId } = this.state;
+    const i = this.state.data.findIndex(c => c._id === updateId);
+    const data = [
+      ...this.state.data.slice(0, i),
+      { author, text, _id: Date.now().toString() },
+      ...this.state.data.slice(i),
+    ];
+    this.setState({ data });
+    fetch(`/api/comments/${updateId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ author, text }),
+    }).then(res => res.json()).then((res) => {
+      if (!res.success) this.setState({ error: res.error.message || res.error });
+      else this.setState({ author: '', text: '', updateId: null });
+    });
+  }
+
+  submitNewComment = () => {
+    const { author, text } = this.state;
+    const data = [...this.state.data, { author, text, _id: Date.now().toString() }];
     this.setState({ data });
     fetch('/api/comments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ author, text: comment }),
+      body: JSON.stringify({ author, text }),
     }).then(res => res.json()).then((res) => {
       if (!res.success) this.setState({ error: res.error.message || res.error });
       else this.setState({ author: '', text: '', error: null });
     });
   }
 
+  submitComment = (e) => {
+    e.preventDefault();
+    const { author, text, updateId } = this.state;
+    if (!author || !text) return;
+    if (updateId) {
+      this.submitUpdatedComment();
+    } else {
+      this.submitNewComment();
+    }
+  }
+
+  onUpdateComment = (id) => {
+    const oldComment = this.state.data.find(c => c._id === id);
+    if (!oldComment) return;
+    this.setState({ author: oldComment.author, text: oldComment.text, updateId: id });
+  }
+
+  onDeleteComment = (id) => {
+    const i = this.state.data.find(c => c._id === id);
+    const data = [
+      ...this.state.data.slice(0, i),
+      ...this.state.data.slice(i),
+    ];
+    fetch(`api/comments/${id}`, { method: 'DELETE' })
+      .then(res => res.json()).then((res) => {
+        if (!res.success) this.setState({ error: res.error });
+        else this.setState({ data });
+      });
+  }
+
   render() {
     return (
       <div>
         <h2>Comments:</h2>
-        <CommentList data={this.state.data} />
+        <CommentList
+          data={this.state.data}
+          handleDeleteComment={this.onDeleteComment}
+          handleUpdateComment={this.onUpdateComment}
+        />
         <CommentForm
           author={this.state.author}
-          comment={this.state.comment}
+          text={this.state.text}
           handleChangeText={this.onChangeText}
           submitComment={this.submitComment}
         />

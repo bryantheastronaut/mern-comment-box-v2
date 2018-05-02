@@ -13,9 +13,9 @@ const CommentForm = props => (
     />
     <input
       type="text"
-      name="comment"
+      name="text"
       placeholder="Say something..."
-      value={props.comment}
+      value={props.text}
       onChange={props.handleChangeText}
     />
     <input type="submit" value="Post" />
@@ -25,12 +25,12 @@ const CommentForm = props => (
 CommentForm.propTypes = {
   submitComment: PropTypes.func.isRequired,
   handleChangeText: PropTypes.func.isRequired,
-  comment: PropTypes.string,
+  text: PropTypes.string,
   author: PropTypes.string,
 };
 
 CommentForm.defaultProps = {
-  comment: '',
+  text: '',
   author: '',
 };
 
