@@ -258,7 +258,7 @@ const CommentForm = props => (
       name="text"
       placeholder="Say something..."
       value={props.text}
-      onChange={props.handleTextChange}
+      onChange={props.handleChangeText}
     />
     <button type="submit">Submit</button>
   </form>
